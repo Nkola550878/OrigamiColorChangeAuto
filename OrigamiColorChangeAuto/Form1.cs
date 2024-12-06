@@ -62,10 +62,18 @@ namespace OrigamiColorChangeAuto
             Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
             endPosition = FindClosestPoint(mousePosition);
 
-            if(startPosition != null)
+            if(startPosition == null)
+            {
+                return;
+            }
+
+            Vector2 difference = startPosition - endPosition;
+            if((difference.x == 0 && difference.y != 0) || (difference.x != 0 && difference.y == 0))
             {
                 canvas.DrawLine(startPosition * pbDrawingPlace.Width / gridSize, endPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
             }
+            startPosition = null;
+            endPosition = null;
         }
 
         Vector2 FindClosestPoint(Vector2 mousePosition)
