@@ -21,7 +21,7 @@ namespace OrigamiColorChangeAuto
 
 
         float penWidth = 2;
-        Control form;
+        Control control;
         Graphics graphics;
 
         Pen edgePen;
@@ -32,7 +32,7 @@ namespace OrigamiColorChangeAuto
 
         Dictionary<Pens, Pen> penMap;
 
-        public Canvas(Control l_form)
+        public Canvas(Control l_control)
         {
             edgePen = new Pen(Color.Black, penWidth);
             backgroundPen = new Pen(Color.LightGray, penWidth);
@@ -41,9 +41,8 @@ namespace OrigamiColorChangeAuto
             auxPen = new Pen(Color.LightBlue, penWidth);
 
 
-            form = l_form;
-
-            graphics = form.CreateGraphics();
+            control = l_control;
+            graphics = control.CreateGraphics();
 
             //Translate enum to wanted pen
 
@@ -57,6 +56,21 @@ namespace OrigamiColorChangeAuto
 
             };
 
+        }
+
+        public void Clear()
+        {
+            graphics.Clear(Color.White);
+        }
+
+
+        public void DrawGrid(int gridSize)
+        {
+            for(int i = 1; i < gridSize; i++)
+            {
+                DrawLine(new Vector2((float)i / gridSize * control.Size.Width, 0), new Vector2((float)i / gridSize * control.Size.Width, control.Size.Height), Pens.background);
+                DrawLine(new Vector2(0, (float)i / gridSize * control.Size.Height), new Vector2(control.Size.Width, (float)i / gridSize * control.Size.Width), Pens.background);
+            }
         }
 
         public void DrawLine(Vector2 start, Vector2 end, Pens pen)

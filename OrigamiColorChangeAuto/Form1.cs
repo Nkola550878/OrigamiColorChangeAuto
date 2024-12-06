@@ -14,6 +14,7 @@ namespace OrigamiColorChangeAuto
     {
         Canvas canvas;
         Control canvasControl;
+        int gridSize;
 
         public Model()
         {
@@ -24,17 +25,26 @@ namespace OrigamiColorChangeAuto
         {
             canvasControl = pbDrawingPlace;
             canvas = new Canvas(canvasControl);
+            canvas.Clear();
         }
 
         private void Model_Paint(object sender, PaintEventArgs e)
         {
-            //Drawing test
+            //canvas.DrawLine(new Vector2(0, 0), new Vector2(0, canvasControl.Size.Height), Canvas.Pens.edge);
+            //canvas.DrawLine(new Vector2(0, 0), new Vector2(canvasControl.Size.Width, 0), Canvas.Pens.edge);
+            //canvas.DrawLine(new Vector2(0, canvasControl.Size.Height), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.edge);
+            //canvas.DrawLine(new Vector2(canvasControl.Size.Width, 0), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.edge);
+        }
 
-            canvas.DrawLine(new Vector2(0, 0), new Vector2(0, canvasControl.Size.Height), Canvas.Pens.edge);
-            canvas.DrawLine(new Vector2(0, 0), new Vector2(canvasControl.Size.Width, 0), Canvas.Pens.mountain);
-            canvas.DrawLine(new Vector2(0, canvasControl.Size.Height), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.valley);
-            canvas.DrawLine(new Vector2(canvasControl.Size.Width, 0), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.aux);
-            canvas.DrawLine(new Vector2(0, 0), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.background);
+        private void tbGridSize_TextChanged(object sender, EventArgs e)
+        {
+            if(int.TryParse(tbGridSize.Text, out gridSize))
+            {
+                //MessageBox.Show(gridSize.ToString());
+                canvas.Clear();
+
+                canvas.DrawGrid(gridSize);
+            }
         }
     }
 }

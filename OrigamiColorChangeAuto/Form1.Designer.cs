@@ -30,7 +30,7 @@
         {
             this.Create = new System.Windows.Forms.Button();
             this.pbDrawingPlace = new System.Windows.Forms.PictureBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbGridSize = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbDrawingPlace)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,20 +51,21 @@
             this.pbDrawingPlace.TabIndex = 1;
             this.pbDrawingPlace.TabStop = false;
             // 
-            // textBox1
+            // txGridSize
             // 
-            this.textBox1.Location = new System.Drawing.Point(273, 415);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "4";
+            this.tbGridSize.Location = new System.Drawing.Point(273, 415);
+            this.tbGridSize.Name = "txGridSize";
+            this.tbGridSize.Size = new System.Drawing.Size(100, 20);
+            this.tbGridSize.TabIndex = 2;
+            this.tbGridSize.Text = "4";
+            this.tbGridSize.TextChanged += new System.EventHandler(this.tbGridSize_TextChanged);
             // 
             // Model
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 450);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.tbGridSize);
             this.Controls.Add(this.pbDrawingPlace);
             this.Controls.Add(this.Create);
             this.Name = "Model";
@@ -81,7 +82,7 @@
 
         private System.Windows.Forms.Button Create;
         private System.Windows.Forms.PictureBox pbDrawingPlace;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbGridSize;
     }
 }
 
