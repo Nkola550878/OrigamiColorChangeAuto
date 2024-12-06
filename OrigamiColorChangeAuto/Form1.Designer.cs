@@ -1,6 +1,6 @@
 ﻿namespace OrigamiColorChangeAuto
 {
-    partial class Form1
+    partial class Model
     {
         /// <summary>
         /// Required designer variable.
@@ -28,20 +28,60 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.Create = new System.Windows.Forms.Button();
+            this.pbDrawingPlace = new System.Windows.Forms.PictureBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDrawingPlace)).BeginInit();
             this.SuspendLayout();
             // 
-            // Form1
+            // Create
+            // 
+            this.Create.Location = new System.Drawing.Point(153, 415);
+            this.Create.Name = "Create";
+            this.Create.Size = new System.Drawing.Size(75, 23);
+            this.Create.TabIndex = 0;
+            this.Create.Text = "Create";
+            this.Create.UseVisualStyleBackColor = true;
+            // 
+            // pbDrawingPlace
+            // 
+            this.pbDrawingPlace.Location = new System.Drawing.Point(12, 12);
+            this.pbDrawingPlace.Name = "pbDrawingPlace";
+            this.pbDrawingPlace.Size = new System.Drawing.Size(371, 371);
+            this.pbDrawingPlace.TabIndex = 1;
+            this.pbDrawingPlace.TabStop = false;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(273, 415);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "4";
+            // 
+            // Model
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(395, 450);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.pbDrawingPlace);
+            this.Controls.Add(this.Create);
+            this.Name = "Model";
+            this.Text = "Model";
+            this.Load += new System.EventHandler(this.Model_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Model_Paint);
+            ((System.ComponentModel.ISupportInitialize)(this.pbDrawingPlace)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
+
+        private System.Windows.Forms.Button Create;
+        private System.Windows.Forms.PictureBox pbDrawingPlace;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
