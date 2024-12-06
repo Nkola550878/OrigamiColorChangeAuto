@@ -63,13 +63,12 @@ namespace OrigamiColorChangeAuto
             graphics.Clear(Color.White);
         }
 
-
         public void DrawGrid(int gridSize)
         {
             for(int i = 1; i < gridSize; i++)
             {
-                DrawLine(new Vector2((float)i / gridSize * control.Size.Width, 0), new Vector2((float)i / gridSize * control.Size.Width, control.Size.Height), Pens.background);
-                DrawLine(new Vector2(0, (float)i / gridSize * control.Size.Height), new Vector2(control.Size.Width, (float)i / gridSize * control.Size.Width), Pens.background);
+                DrawLine(new Vector2((float)i / gridSize * control.Width, control.Height / gridSize), new Vector2((float)i / gridSize * control.Width, (float)control.Height / gridSize * (gridSize - 1)), Pens.background);
+                DrawLine(new Vector2(control.Size.Width / gridSize, (float)i / gridSize * control.Height), new Vector2((float)control.Width / gridSize * (gridSize - 1), (float)i / gridSize * control.Width), Pens.background);
             }
         }
 

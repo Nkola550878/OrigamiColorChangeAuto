@@ -50,14 +50,16 @@
             this.pbDrawingPlace.Size = new System.Drawing.Size(371, 371);
             this.pbDrawingPlace.TabIndex = 1;
             this.pbDrawingPlace.TabStop = false;
+            this.pbDrawingPlace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbDrawingPlace_MouseDown);
+            this.pbDrawingPlace.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbDrawingPlace_MouseUp);
             // 
-            // txGridSize
+            // tbGridSize
             // 
             this.tbGridSize.Location = new System.Drawing.Point(273, 415);
-            this.tbGridSize.Name = "txGridSize";
+            this.tbGridSize.Name = "tbGridSize";
             this.tbGridSize.Size = new System.Drawing.Size(100, 20);
             this.tbGridSize.TabIndex = 2;
-            this.tbGridSize.Text = "4";
+            this.tbGridSize.Text = "0";
             this.tbGridSize.TextChanged += new System.EventHandler(this.tbGridSize_TextChanged);
             // 
             // Model

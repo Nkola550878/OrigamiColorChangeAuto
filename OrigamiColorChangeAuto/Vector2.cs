@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,5 +17,24 @@ namespace OrigamiColorChangeAuto
             y = l_y;
         }
 
+        public static Vector2 operator -(Vector2 minuend, Vector2 subtrahend)
+        {
+            return new Vector2(minuend.x - subtrahend.x, minuend.y - subtrahend.y);
+        }
+
+        public static Vector2 operator *(Vector2 vector, float scalar)
+        {
+            return new Vector2(vector.x * scalar, vector.y * scalar);
+        }
+
+        public static Vector2 operator /(Vector2 vector, float scalar)
+        {
+            return vector * (1 / scalar);
+        }
+
+        public override string ToString()
+        {
+            return $"({x},{y})";
+        }
     }
 }

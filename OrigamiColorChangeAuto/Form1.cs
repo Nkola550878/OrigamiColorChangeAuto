@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,7 +16,9 @@ namespace OrigamiColorChangeAuto
     {
         Canvas canvas;
         Control canvasControl;
-        int gridSize;
+        int gridSize = 6;
+        Vector2 startPosition;
+        Vector2 endPosition;
 
         public Model()
         {
@@ -25,15 +29,14 @@ namespace OrigamiColorChangeAuto
         {
             canvasControl = pbDrawingPlace;
             canvas = new Canvas(canvasControl);
-            canvas.Clear();
         }
 
         private void Model_Paint(object sender, PaintEventArgs e)
         {
-            //canvas.DrawLine(new Vector2(0, 0), new Vector2(0, canvasControl.Size.Height), Canvas.Pens.edge);
-            //canvas.DrawLine(new Vector2(0, 0), new Vector2(canvasControl.Size.Width, 0), Canvas.Pens.edge);
-            //canvas.DrawLine(new Vector2(0, canvasControl.Size.Height), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.edge);
-            //canvas.DrawLine(new Vector2(canvasControl.Size.Width, 0), new Vector2(canvasControl.Size.Width, canvasControl.Size.Height), Canvas.Pens.edge);
+            canvas.DrawLine(new Vector2(0, 0), new Vector2(0, canvasControl.Height), Canvas.Pens.edge);
+            canvas.DrawLine(new Vector2(0, 0), new Vector2(canvasControl.Width, 0), Canvas.Pens.edge);
+            canvas.DrawLine(new Vector2(0, canvasControl.Height), new Vector2(canvasControl.Width, canvasControl.Height), Canvas.Pens.edge);
+            canvas.DrawLine(new Vector2(canvasControl.Width, 0), new Vector2(canvasControl.Width, canvasControl.Height), Canvas.Pens.edge);
         }
 
         private void tbGridSize_TextChanged(object sender, EventArgs e)
@@ -43,8 +46,34 @@ namespace OrigamiColorChangeAuto
                 //MessageBox.Show(gridSize.ToString());
                 canvas.Clear();
 
+                gridSize += 2;
                 canvas.DrawGrid(gridSize);
             }
         }
+
+        private void pbDrawingPlace_MouseDown(object sender, MouseEventArgs e)
+        {
+            Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
+            startPosition = FindClosestPoint(mousePosition);
+        }
+
+        private void pbDrawingPlace_MouseUp(object sender, MouseEventArgs e)
+        {
+            Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
+            endPosition = FindClosestPoint(mousePosition);
+
+            if(startPosition != null)
+            {
+                canvas.DrawLine(startPosition * pbDrawingPlace.Width / gridSize, endPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
+            }
+        }
+
+        Vector2 FindClosestPoint(Vector2 mousePosition)
+        {
+            Vector2 mousePositionPercentage = (mousePosition / pbDrawingPlace.Width) * gridSize;
+
+            return new Vector2((float)Math.Round(mousePositionPercentage.x), (float)Math.Round(mousePositionPercentage.y));
+        }
+
     }
 }
