@@ -32,6 +32,7 @@
             this.pbDrawingPlace = new System.Windows.Forms.PictureBox();
             this.tbGridSize = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnLoad = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbDrawingPlace)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,7 +53,6 @@
             this.pbDrawingPlace.TabIndex = 1;
             this.pbDrawingPlace.TabStop = false;
             this.pbDrawingPlace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbDrawingPlace_MouseDown);
-            this.pbDrawingPlace.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbDrawingPlace_MouseUp);
             // 
             // tbGridSize
             // 
@@ -73,11 +73,22 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // btnLoad
+            // 
+            this.btnLoad.Location = new System.Drawing.Point(308, 396);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(75, 23);
+            this.btnLoad.TabIndex = 4;
+            this.btnLoad.Text = "Load Model";
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
             // Model
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(395, 486);
+            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tbGridSize);
             this.Controls.Add(this.pbDrawingPlace);
@@ -98,6 +109,7 @@
         private System.Windows.Forms.PictureBox pbDrawingPlace;
         private System.Windows.Forms.TextBox tbGridSize;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnLoad;
     }
 }
 

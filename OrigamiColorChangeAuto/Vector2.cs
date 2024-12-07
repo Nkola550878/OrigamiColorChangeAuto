@@ -17,6 +17,14 @@ namespace OrigamiColorChangeAuto
             y = l_y;
         }
 
+        public Vector2(string s)
+        {
+            s = s.Substring(1, s.Length - 2);
+            string[] coordinates = s.Split(',');
+            x = float.Parse(coordinates[0]);
+            y = float.Parse(coordinates[1]);
+        }
+
         public static Vector2 operator -(Vector2 minuend, Vector2 subtrahend)
         {
             return new Vector2(minuend.x - subtrahend.x, minuend.y - subtrahend.y);

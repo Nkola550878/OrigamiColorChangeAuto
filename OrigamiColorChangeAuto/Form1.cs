@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,21 +86,6 @@ namespace OrigamiColorChangeAuto
             shapeEdges.Add(startPosition);
         }
 
-        private void pbDrawingPlace_MouseUp(object sender, MouseEventArgs e)
-        {
-            //Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
-            //endPosition = FindClosestPoint(mousePosition);
-
-            //if(startPosition == null)
-            //{
-            //    return;
-            //}
-
-
-            //startPosition = null;
-            //endPosition = null;
-        }
-
         Vector2 FindClosestPoint(Vector2 mousePosition)
         {
             Vector2 mousePositionPercentage = (mousePosition / pbDrawingPlace.Width) * gridSize;
@@ -117,9 +103,71 @@ namespace OrigamiColorChangeAuto
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text file|* .txt";
             if(saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                
+                string path = saveFileDialog.FileName;
+                StreamWriter sw = new StreamWriter(path);
+                string points = "";
+                string splitters = "";
+
+                foreach(Vector2 point in shapeEdges)
+                {
+                    points = $"{points} {point.ToString()}";
+                }
+
+                foreach(int i in splittingPoints)
+                {
+                    splitters = $"{splitters} {i}";
+                }
+
+                sw.WriteLine(points.Substring(1));
+                sw.WriteLine(splitters.Substring(1));
+                sw.Close();
+            }
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Text file|* .txt";
+            if(openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string path = openFileDialog.FileName;
+                StreamReader sr = new StreamReader(path);
+                string points = sr.ReadLine();
+                string splitters = sr.ReadLine();
+
+                string[] splittersSplit = splitters.Split(' ');
+                splittingPoints.Clear();
+                foreach (string s in splittersSplit)
+                {
+                    splittingPoints.Add(int.Parse(s));
+                }
+
+                int current = 0;
+
+                string[] pointsSplit = points.Split(' ');
+                for (int i = 0; i < pointsSplit.Length; i++)
+                {
+                    Vector2 currentPoint = new Vector2(pointsSplit[i]);
+
+                    if(i == splittingPoints[current])
+                    {
+                        current++;
+                        shapeEdges.Add(currentPoint);
+                        continue;
+                    }
+                    
+                    canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, currentPoint * canvasControl.Width / gridSize, Canvas.Pens.edge);
+
+                    shapeEdges.Add(currentPoint);
+                    if(i == splittingPoints[current] - 1)
+                    {
+                        canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, shapeEdges[splittingPoints[current - 1]] * canvasControl.Width / gridSize, Canvas.Pens.edge);
+                        canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, currentPoint * canvasControl.Width / gridSize, Canvas.Pens.edge);
+                    }
+                }
             }
         }
     }
