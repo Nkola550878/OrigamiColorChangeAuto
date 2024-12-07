@@ -18,7 +18,8 @@ namespace OrigamiColorChangeAuto
         Control canvasControl;
         int gridSize = 6;
         Vector2 startPosition;
-        Vector2 endPosition;
+        List<Vector2> shapeEdges = new List<Vector2>();
+        List<int> splittingPoints = new List<int>();
 
         public Model()
         {
@@ -29,6 +30,7 @@ namespace OrigamiColorChangeAuto
         {
             canvasControl = pbDrawingPlace;
             canvas = new Canvas(canvasControl);
+            splittingPoints.Add(0);
         }
 
         private void Model_Paint(object sender, PaintEventArgs e)
@@ -55,33 +57,70 @@ namespace OrigamiColorChangeAuto
         {
             Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
             startPosition = FindClosestPoint(mousePosition);
-        }
 
-        private void pbDrawingPlace_MouseUp(object sender, MouseEventArgs e)
-        {
-            Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
-            endPosition = FindClosestPoint(mousePosition);
+            if(shapeEdges.Count == splittingPoints.Last())
+            {
+                shapeEdges.Add(startPosition);
+                return;
+            }
 
-            if(startPosition == null)
+            MessageBox.Show($"{splittingPoints.Last()},{shapeEdges.Count - 1}");
+
+            if (startPosition == shapeEdges[splittingPoints.Last()])
+            {
+                MessageBox.Show("a");
+                canvas.DrawLine(shapeEdges.Last() * pbDrawingPlace.Width / gridSize, startPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
+                splittingPoints.Add(shapeEdges.Count);
+                return;
+            }
+
+            Vector2 difference = startPosition - shapeEdges.Last();
+            if ((difference.x != 0 || difference.y == 0) && (difference.x == 0 || difference.y != 0))
             {
                 return;
             }
 
-            Vector2 difference = startPosition - endPosition;
-            if((difference.x == 0 && difference.y != 0) || (difference.x != 0 && difference.y == 0))
-            {
-                canvas.DrawLine(startPosition * pbDrawingPlace.Width / gridSize, endPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
-            }
-            startPosition = null;
-            endPosition = null;
+            canvas.DrawLine(shapeEdges.Last() * pbDrawingPlace.Width / gridSize, startPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
+
+            shapeEdges.Add(startPosition);
+        }
+
+        private void pbDrawingPlace_MouseUp(object sender, MouseEventArgs e)
+        {
+            //Vector2 mousePosition = new Vector2(pbDrawingPlace.PointToClient(MousePosition).X, pbDrawingPlace.PointToClient(MousePosition).Y);
+            //endPosition = FindClosestPoint(mousePosition);
+
+            //if(startPosition == null)
+            //{
+            //    return;
+            //}
+
+
+            //startPosition = null;
+            //endPosition = null;
         }
 
         Vector2 FindClosestPoint(Vector2 mousePosition)
         {
             Vector2 mousePositionPercentage = (mousePosition / pbDrawingPlace.Width) * gridSize;
 
-            return new Vector2((float)Math.Round(mousePositionPercentage.x), (float)Math.Round(mousePositionPercentage.y));
+            Vector2 coordinate = new Vector2((float)Math.Round(mousePositionPercentage.x), (float)Math.Round(mousePositionPercentage.y));
+
+            if (coordinate.x == 0) coordinate.x = 1;
+            if (coordinate.x == gridSize) coordinate.x = gridSize - 1;
+            if (coordinate.y == 0) coordinate.y = 1;
+            if (coordinate.y == gridSize) coordinate.y = gridSize - 1;
+
+            return coordinate;
         }
 
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if(saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                
+            }
+        }
     }
 }
