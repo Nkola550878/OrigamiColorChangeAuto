@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace OrigamiColorChangeAuto
 {
@@ -46,7 +47,6 @@ namespace OrigamiColorChangeAuto
         {
             if(int.TryParse(tbGridSize.Text, out gridSize))
             {
-                //MessageBox.Show(gridSize.ToString());
                 canvas.Clear();
 
                 gridSize += 2;
@@ -65,11 +65,8 @@ namespace OrigamiColorChangeAuto
                 return;
             }
 
-            MessageBox.Show($"{splittingPoints.Last()},{shapeEdges.Count - 1}");
-
             if (startPosition == shapeEdges[splittingPoints.Last()])
             {
-                MessageBox.Show("a");
                 canvas.DrawLine(shapeEdges.Last() * pbDrawingPlace.Width / gridSize, startPosition * pbDrawingPlace.Width / gridSize, Canvas.Pens.edge);
                 splittingPoints.Add(shapeEdges.Count);
                 return;
@@ -169,6 +166,43 @@ namespace OrigamiColorChangeAuto
                     }
                 }
             }
+        }
+
+        private void Create_Click(object sender, EventArgs e)
+        {
+            int perimeter = CalculatePerimeter();
+
+            perimeter += 2 * splittingPoints.Count - 4;
+
+            int squarePerimeter = (int)Math.Ceiling((double)perimeter / 4);
+
+            MessageBox.Show(squarePerimeter.ToString());
+
+
+        }
+
+        private int CalculatePerimeter()
+        {
+            int current = 1;
+            float distance = 0;
+
+            for (int i = 0; i < shapeEdges.Count; i++)
+            {
+                if (i == splittingPoints[current] - 1)
+                {
+                    distance += Vector2.Distance(shapeEdges[i], shapeEdges[splittingPoints[current - 1]]);
+                    current++;
+                    continue;
+                }
+                distance += Vector2.Distance(shapeEdges[i], shapeEdges[i + 1]);
+            }
+            if(Math.Round(distance) - distance != 0)
+            {
+                MessageBox.Show("How did you get here");
+                return 0;
+            }
+            return (int)distance;
+
         }
     }
 }

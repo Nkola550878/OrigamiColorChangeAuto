@@ -54,5 +54,10 @@ namespace OrigamiColorChangeAuto
         {
             return $"({x},{y})";
         }
+
+        public static float Distance(Vector2 start, Vector2 end)
+        {
+            return (float)Math.Sqrt(Math.Pow(start.x - end.x, 2) + Math.Pow(start.y - end.y, 2));
+        }
     }
 }

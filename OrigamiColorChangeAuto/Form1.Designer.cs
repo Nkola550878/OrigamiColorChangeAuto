@@ -44,6 +44,7 @@
             this.Create.TabIndex = 0;
             this.Create.Text = "Create";
             this.Create.UseVisualStyleBackColor = true;
+            this.Create.Click += new System.EventHandler(this.Create_Click);
             // 
             // pbDrawingPlace
             // 
