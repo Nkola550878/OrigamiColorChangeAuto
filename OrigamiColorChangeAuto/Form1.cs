@@ -178,7 +178,7 @@ namespace OrigamiColorChangeAuto
 
             MessageBox.Show(squarePerimeter.ToString());
 
-
+            IterateOverAllPoints(shapeEdges, splittingPoints, squarePerimeter);
         }
 
         private int CalculatePerimeter()
@@ -203,6 +203,88 @@ namespace OrigamiColorChangeAuto
             }
             return (int)distance;
 
+        }
+
+        private void IterateOverAllPointsInOnePolygon(List<Vector2> l_shapeEdges, List<int> l_splittingPoints, int index)
+        {
+            //Vector2 currentPossition2 = l_shapeEdges[l_splittingPoints[1]];
+            //int currentIndex2 = l_splittingPoints[1];
+
+            //for (int j = l_splittingPoints[1]; j < l_splittingPoints[2]; j++)
+            //{
+            //    Vector2 next2 = l_shapeEdges[(currentIndex2 + 1) % (l_splittingPoints[2] - l_splittingPoints[1]) + l_splittingPoints[1]];
+            //    Vector2 normalisedDifference2 = (next2 - l_shapeEdges[j]).Normalize();
+
+            //    while (currentPossition2 != next2)
+            //    {
+            //        currentPossition2 += normalisedDifference2;
+            //    }
+
+            //    currentIndex2++;
+                
+            Vector2 currentPossition = l_shapeEdges[l_splittingPoints[index]];
+            int currentIndex = l_splittingPoints[index];
+
+            for (int j = l_splittingPoints[index]; j < l_splittingPoints[index + 1]; j++)
+            {
+                Vector2 next = l_shapeEdges[(currentIndex + 1) % (l_splittingPoints[index + 1] - l_splittingPoints[index]) + l_splittingPoints[index]];
+                Vector2 normalisedDifference = (next - l_shapeEdges[j]).Normalize();
+
+                while (currentPossition != next)
+                {
+                    currentPossition += normalisedDifference;
+                }
+
+                currentIndex++;
+            }
+        }
+
+
+        private void IterateOverAllPoints(List<Vector2> l_shapeEdges, List<int> l_splittingPoints, int l_perimeter)
+        {
+            Vector2 currentPossition1 = l_shapeEdges[0];
+            int currentIndex1 = l_splittingPoints[0];
+
+            for (int i = l_splittingPoints[0]; i < l_splittingPoints[1]; i++)
+            {
+                Vector2 next1 = l_shapeEdges[(i + 1) % l_splittingPoints[1]];
+                Vector2 normalisedDifference1 = (l_shapeEdges[(i + 1) % l_splittingPoints[1]] - l_shapeEdges[i]).Normalize();
+
+                while (currentPossition1 != l_shapeEdges[(currentIndex1 + 1) % l_splittingPoints[1]])
+                {
+                    currentPossition1 += normalisedDifference1;
+
+                    Vector2 currentPossition2 = l_shapeEdges[l_splittingPoints[1]];
+                    int currentIndex2 = l_splittingPoints[1];
+
+                    for (int j = l_splittingPoints[1]; j < l_splittingPoints[2]; j++)
+                    {
+                        Vector2 next2 = l_shapeEdges[(currentIndex2 + 1) % (l_splittingPoints[2] - l_splittingPoints[1]) + l_splittingPoints[1]];
+                        Vector2 normalisedDifference2 = (next2 - l_shapeEdges[j]).Normalize();
+
+                        while (currentPossition2 != next2)
+                        {
+                            currentPossition2 += normalisedDifference2;
+
+                            Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_perimeter);
+                        }
+
+                        currentIndex2++;
+                    }
+                }
+
+                currentIndex1++;
+            }
+        }
+
+
+        private void Connect(int index1, Vector2 position1, int index2, Vector2 position2, int l_perimeter)
+        {
+            if (Vector2.Distance(position1, position2) > 1)
+            {
+                return;
+            }
+            MessageBox.Show($"{position1}, {position2}");
         }
     }
 }

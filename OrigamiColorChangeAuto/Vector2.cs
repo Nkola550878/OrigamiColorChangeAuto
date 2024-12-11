@@ -25,6 +25,13 @@ namespace OrigamiColorChangeAuto
             y = float.Parse(coordinates[1]);
         }
 
+        public static Vector2 zero = new Vector2(0, 0);
+
+        public static Vector2 operator +(Vector2 vector1, Vector2 vector2)
+        {
+            return new Vector2(vector1.x + vector2.x, vector1.y + vector2.y);
+        }
+
         public static Vector2 operator -(Vector2 minuend, Vector2 subtrahend)
         {
             return new Vector2(minuend.x - subtrahend.x, minuend.y - subtrahend.y);
@@ -58,6 +65,16 @@ namespace OrigamiColorChangeAuto
         public static float Distance(Vector2 start, Vector2 end)
         {
             return (float)Math.Sqrt(Math.Pow(start.x - end.x, 2) + Math.Pow(start.y - end.y, 2));
+        }
+
+        public float Magnitude()
+        {
+            return Distance(this, zero);
+        }
+
+        public Vector2 Normalize()
+        {
+            return this / Magnitude();
         }
     }
 }
