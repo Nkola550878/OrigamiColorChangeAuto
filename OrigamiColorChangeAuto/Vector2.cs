@@ -57,6 +57,19 @@ namespace OrigamiColorChangeAuto
             return (v1.x != v2.x) || (v1.y != v2.y);
         }
 
+        public static float CrossProduct(Vector2 v1, Vector2 v2)
+        {
+            return v1.x * v2.y - v1.y * v2.x;
+        }
+
+        public static float CrossProduct(Vector2 v1, Vector2 v2, Vector2 v3)
+        {
+            Vector2 temp1 = v1 - v2;
+            Vector2 temp2 = v3 - v2;
+
+            return CrossProduct(temp1, temp2);
+        }
+
         public override string ToString()
         {
             return $"({x},{y})";

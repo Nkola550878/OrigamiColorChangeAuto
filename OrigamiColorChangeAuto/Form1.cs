@@ -22,6 +22,7 @@ namespace OrigamiColorChangeAuto
         Vector2 startPosition;
         List<Vector2> shapeEdges = new List<Vector2>();
         List<int> splittingPoints = new List<int>();
+        int squarePerimeter;
 
         public Model()
         {
@@ -174,11 +175,15 @@ namespace OrigamiColorChangeAuto
 
             perimeter += 2 * splittingPoints.Count - 4;
 
-            int squarePerimeter = (int)Math.Ceiling((double)perimeter / 4);
+            squarePerimeter = (int)Math.Ceiling((double)perimeter / 4);
 
             MessageBox.Show(squarePerimeter.ToString());
 
-            IterateOverAllPoints(shapeEdges, splittingPoints, squarePerimeter);
+            List<int> tempi = splittingPoints;
+
+            //ChangeOrientation(shapeEdges, tempi, 1);
+
+            IterateOverAllPoints(splittingPoints, squarePerimeter);
         }
 
         private int CalculatePerimeter()
@@ -239,34 +244,34 @@ namespace OrigamiColorChangeAuto
             }
         }
 
-
-        private void IterateOverAllPoints(List<Vector2> l_shapeEdges, List<int> l_splittingPoints, int l_perimeter)
+        private void IterateOverAllPoints(List<int> l_splittingPoints, int l_perimeter)
         {
-            Vector2 currentPossition1 = l_shapeEdges[0];
+            Vector2 currentPossition1 = shapeEdges[0];
             int currentIndex1 = l_splittingPoints[0];
 
             for (int i = l_splittingPoints[0]; i < l_splittingPoints[1]; i++)
             {
-                Vector2 next1 = l_shapeEdges[(i + 1) % l_splittingPoints[1]];
-                Vector2 normalisedDifference1 = (l_shapeEdges[(i + 1) % l_splittingPoints[1]] - l_shapeEdges[i]).Normalize();
+                Vector2 next1 = shapeEdges[(i + 1) % l_splittingPoints[1]];
+                Vector2 normalisedDifference1 = (shapeEdges[(i + 1) % l_splittingPoints[1]] - shapeEdges[i]).Normalize();
 
-                while (currentPossition1 != l_shapeEdges[(currentIndex1 + 1) % l_splittingPoints[1]])
+                while (currentPossition1 != shapeEdges[(currentIndex1 + 1) % l_splittingPoints[1]])
                 {
                     currentPossition1 += normalisedDifference1;
 
-                    Vector2 currentPossition2 = l_shapeEdges[l_splittingPoints[1]];
+                    Vector2 currentPossition2 = shapeEdges[l_splittingPoints[1]];
                     int currentIndex2 = l_splittingPoints[1];
 
                     for (int j = l_splittingPoints[1]; j < l_splittingPoints[2]; j++)
                     {
-                        Vector2 next2 = l_shapeEdges[(currentIndex2 + 1) % (l_splittingPoints[2] - l_splittingPoints[1]) + l_splittingPoints[1]];
-                        Vector2 normalisedDifference2 = (next2 - l_shapeEdges[j]).Normalize();
+                        Vector2 next2 = shapeEdges[(currentIndex2 + 1) % (l_splittingPoints[2] - l_splittingPoints[1]) + l_splittingPoints[1]];
+                        Vector2 normalisedDifference2 = (next2 - shapeEdges[j]).Normalize();
 
                         while (currentPossition2 != next2)
                         {
                             currentPossition2 += normalisedDifference2;
 
-                            Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_perimeter);
+                            Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_splittingPoints);
+
                         }
 
                         currentIndex2++;
@@ -277,14 +282,72 @@ namespace OrigamiColorChangeAuto
             }
         }
 
-
-        private void Connect(int index1, Vector2 position1, int index2, Vector2 position2, int l_perimeter)
+        private void ChangeOrientation(List<Vector2> l_shapeEdges, List<int> l_splittingPoints, int l_index)
         {
+            Vector2 temp;
+            for(int i = l_splittingPoints[l_index]; i < (l_splittingPoints[l_index + 1] + l_splittingPoints[l_index]) / 2; i++)
+            {
+                temp = l_shapeEdges[i];
+                l_shapeEdges[i] = l_shapeEdges[splittingPoints[l_index + 1] + splittingPoints[l_index] - 1 - i];
+                l_shapeEdges[splittingPoints[l_index + 1] + splittingPoints[l_index] - 1 - i] = temp;
+            }
+            
+        }
+
+        int attempt = 0;
+
+        //Not generalised
+
+        private void Connect(int index1, Vector2 position1, int index2, Vector2 position2, List<int> l_SplittingPoints)
+        {
+            List<Vector2> shapeEdgesCopy = shapeEdges.ToList();
+
             if (Vector2.Distance(position1, position2) > 1)
             {
                 return;
             }
-            MessageBox.Show($"{position1}, {position2}");
+            MessageBox.Show($"Attempt: {attempt}");
+            attempt++;
+            List<Vector2> changedTempEdges = shapeEdgesCopy;
+
+            //Should fix orientation
+            //Doesn't work. shoud calculate area and check shoud I flip it with sign of it
+
+            int indexOfTestedShape;
+            for (indexOfTestedShape = 0; indexOfTestedShape < l_SplittingPoints.Count; indexOfTestedShape++)
+            {
+                if (l_SplittingPoints[indexOfTestedShape] > index2) break;
+            }
+            indexOfTestedShape--;
+
+            //index1 < index2
+            shapeEdgesCopy.Insert(index1 + 1, position1);
+            shapeEdgesCopy.Insert(index1 + 1, position2);
+            shapeEdgesCopy.Insert(index1 + 1, position2);
+            shapeEdgesCopy.Insert(index1 + 1, position1);
+
+            //connecting shape 0 and 1
+            for (int i = 0; i < l_SplittingPoints[2] - l_SplittingPoints[1]; i++)
+            {
+                shapeEdgesCopy.Insert(index1 + 3, shapeEdges[l_SplittingPoints[1] + (index2 + 1 + i) % (l_SplittingPoints[2] - l_SplittingPoints[1])]);
+
+                shapeEdgesCopy.RemoveAt(shapeEdgesCopy.Count - 1);
+            }
+
+            //Assuming only 2 shapes. If there was more connect wouldn't be able to call checkDistances
+            CheckDistances(shapeEdgesCopy, squarePerimeter);
+        }
+
+        private bool CheckDistances(List<Vector2> l_shapeEdges, int l_perimeter)
+        {
+            int distanceFromStart = 0;
+
+            while (distanceFromStart < l_perimeter)
+            {
+
+            }
+
+            return false;
         }
     }
 }
