@@ -181,8 +181,6 @@ namespace OrigamiColorChangeAuto
 
             List<int> tempi = splittingPoints;
 
-            //ChangeOrientation(shapeEdges, tempi, 1);
-
             IterateOverAllPoints(splittingPoints, squarePerimeter);
         }
 
@@ -294,8 +292,6 @@ namespace OrigamiColorChangeAuto
             
         }
 
-        int attempt = 0;
-
         //Not generalised
 
         private void Connect(int index1, Vector2 position1, int index2, Vector2 position2, List<int> l_SplittingPoints)
@@ -306,19 +302,22 @@ namespace OrigamiColorChangeAuto
             {
                 return;
             }
-            MessageBox.Show($"Attempt: {attempt}");
-            attempt++;
             List<Vector2> changedTempEdges = shapeEdgesCopy;
 
             //Should fix orientation
-            //Doesn't work. shoud calculate area and check shoud I flip it with sign of it
 
+            //assuming that first point is on the first shape
             int indexOfTestedShape;
             for (indexOfTestedShape = 0; indexOfTestedShape < l_SplittingPoints.Count; indexOfTestedShape++)
             {
                 if (l_SplittingPoints[indexOfTestedShape] > index2) break;
             }
             indexOfTestedShape--;
+
+            if(Area(0) * Area(indexOfTestedShape) < 0)
+            {
+                ChangeOrientation(shapeEdgesCopy, splittingPoints, indexOfTestedShape);
+            }
 
             //index1 < index2
             shapeEdgesCopy.Insert(index1 + 1, position1);
@@ -334,19 +333,73 @@ namespace OrigamiColorChangeAuto
                 shapeEdgesCopy.RemoveAt(shapeEdgesCopy.Count - 1);
             }
 
+            //Removing duplicates and ones on straight line
+            CleanUp(shapeEdgesCopy);
+
             //Assuming only 2 shapes. If there was more connect wouldn't be able to call checkDistances
-            CheckDistances(shapeEdgesCopy, squarePerimeter);
+            MessageBox.Show(CheckDistances(shapeEdgesCopy, squarePerimeter).ToString());
+        }
+
+        private void CleanUp(List<Vector2> l_shapeEdges)
+        {
+            for (int i = 0; i < l_shapeEdges.Count; i++)
+            {
+                if (l_shapeEdges[i] == l_shapeEdges[(i + 1) % l_shapeEdges.Count])
+                {
+                    l_shapeEdges.RemoveAt(i);
+                }
+            }
+
+            for (int i = 0; i < l_shapeEdges.Count; i++)
+            {
+                if (Vector2.CrossProduct(l_shapeEdges[i], l_shapeEdges[(i + 1) % l_shapeEdges.Count], l_shapeEdges[(i + 2) % l_shapeEdges.Count]) == 0)
+                {
+                    l_shapeEdges.RemoveAt((i + 1) % l_shapeEdges.Count);
+                }
+            }
+        }
+
+        private float Area(int index)
+        {
+            float area = 0;
+            for (int i = splittingPoints[index]; i < splittingPoints[index + 1]; i++)
+            {
+                area += Vector2.CrossProduct(shapeEdges[i], Vector2.zero, shapeEdges[(i + 1) % (splittingPoints[index + 1] - splittingPoints[index]) + splittingPoints[index]]);
+            }
+            return area / 2;
         }
 
         private bool CheckDistances(List<Vector2> l_shapeEdges, int l_perimeter)
         {
-            int distanceFromStart = 0;
+            float distanceToStart = 0;
+            float distanceToEnd = 0;
+            int startIndex = 0;
+            int endIndex = 0;
 
-            while (distanceFromStart < l_perimeter)
+            while (distanceToStart < l_perimeter * 4)
             {
+                for (int i = 1; i <= 3; i++)
+                {
+                    while(distanceToEnd - distanceToStart < i * l_perimeter)
+                    {
+                        //MessageBox.Show((distanceToEnd - distanceToStart).ToString());
+                        distanceToEnd += Vector2.Distance(l_shapeEdges[endIndex], l_shapeEdges[(endIndex + 1) % l_shapeEdges.Count]);
+                        endIndex = (endIndex + 1) % l_shapeEdges.Count;
+                    }
 
+                    if(distanceToEnd - distanceToStart > i * l_perimeter)
+                    {
+                        break;
+                    }
+
+                    if ((distanceToEnd - distanceToStart) == 3 * l_perimeter)
+                        return true;
+                }
+                distanceToStart += Vector2.Distance(l_shapeEdges[startIndex], l_shapeEdges[(startIndex + 1) % l_shapeEdges.Count]);
+                startIndex = (startIndex + 1) % l_shapeEdges.Count;
+                distanceToEnd = distanceToStart;
+                endIndex = startIndex;
             }
-
             return false;
         }
     }
