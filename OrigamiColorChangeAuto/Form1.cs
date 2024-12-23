@@ -132,41 +132,42 @@ namespace OrigamiColorChangeAuto
             if(openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string path = openFileDialog.FileName;
-                StreamReader sr = new StreamReader(path);
-                string points = sr.ReadLine();
-                string splitters = sr.ReadLine();
 
-                string[] splittersSplit = splitters.Split(' ');
-                splittingPoints.Clear();
-                foreach (string s in splittersSplit)
-                {
-                    splittingPoints.Add(int.Parse(s));
-                }
+                LoadFromFile(path);
 
-                int current = 0;
-
-                string[] pointsSplit = points.Split(' ');
-                for (int i = 0; i < pointsSplit.Length; i++)
-                {
-                    Vector2 currentPoint = new Vector2(pointsSplit[i]);
-
-                    if(i == splittingPoints[current])
-                    {
-                        current++;
-                        shapeEdges.Add(currentPoint);
-                        continue;
-                    }
-                    
-                    canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, currentPoint * canvasControl.Width / gridSize, Canvas.Pens.edge);
-
-                    shapeEdges.Add(currentPoint);
-                    if(i == splittingPoints[current] - 1)
-                    {
-                        canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, shapeEdges[splittingPoints[current - 1]] * canvasControl.Width / gridSize, Canvas.Pens.edge);
-                        canvas.DrawLine(shapeEdges.Last() * canvasControl.Width / gridSize, currentPoint * canvasControl.Width / gridSize, Canvas.Pens.edge);
-                    }
-                }
+                canvas.DrawShape(shapeEdges, splittingPoints, gridSize, Canvas.Pens.edge);
             }
+        }
+
+        private void LoadFromFile(string path)
+        {
+            StreamReader sr = new StreamReader(path);
+            string points = sr.ReadLine();
+            string splitters = sr.ReadLine();
+
+            string[] splittersSplit = splitters.Split(' ');
+            splittingPoints.Clear();
+            foreach (string s in splittersSplit)
+            {
+                splittingPoints.Add(int.Parse(s));
+            }
+
+            int current = 0;
+
+            string[] pointsSplit = points.Split(' ');
+            for (int i = 0; i < pointsSplit.Length; i++)
+            {
+                Vector2 currentPoint = new Vector2(pointsSplit[i]);
+
+                if (i == splittingPoints[current])
+                {
+                    current++;
+                    shapeEdges.Add(currentPoint);
+                    continue;
+                }
+
+                shapeEdges.Add(currentPoint);
+            } 
         }
 
         private void Create_Click(object sender, EventArgs e)
@@ -269,7 +270,6 @@ namespace OrigamiColorChangeAuto
                             currentPossition2 += normalisedDifference2;
 
                             Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_splittingPoints);
-
                         }
 
                         currentIndex2++;

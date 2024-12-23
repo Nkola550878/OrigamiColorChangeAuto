@@ -67,8 +67,10 @@ namespace OrigamiColorChangeAuto
         {
             for(int i = 1; i < gridSize; i++)
             {
-                DrawLine(new Vector2((float)i / gridSize * control.Width, control.Height / gridSize), new Vector2((float)i / gridSize * control.Width, (float)control.Height / gridSize * (gridSize - 1)), Pens.background);
-                DrawLine(new Vector2(control.Size.Width / gridSize, (float)i / gridSize * control.Height), new Vector2((float)control.Width / gridSize * (gridSize - 1), (float)i / gridSize * control.Width), Pens.background);
+                //DrawLine(new Vector2(i / gridSize * control.Width, control.Height / gridSize), new Vector2((float)i / gridSize * control.Width, (float)control.Height / gridSize * (gridSize - 1)), Pens.background);
+                DrawLine(WorldToView(new Vector2(i, 1), gridSize), WorldToView(new Vector2(i, gridSize - 1), gridSize), Pens.background);
+                //DrawLine(new Vector2(control.Size.Width / gridSize, (float)i / gridSize * control.Height), new Vector2((float)control.Width / gridSize * (gridSize - 1), (float)i / gridSize * control.Width), Pens.background);
+                DrawLine(WorldToView(new Vector2(1, i), gridSize), WorldToView(new Vector2(gridSize - 1, i), gridSize), Pens.background);
             }
         }
 
@@ -85,5 +87,27 @@ namespace OrigamiColorChangeAuto
             }
         }
 
+        public Vector2 WorldToView(Vector2 vector2, int gridSize)
+        {
+            //Assuming that grid is square;
+            return new Vector2(vector2.x * control.Width / gridSize, vector2.y * control.Height / gridSize);
+        }
+
+        public void DrawShape(List<Vector2> l_shapeEdges, List<int> l_splittingPoints, int l_gridSize, Pens chosenPen)
+        {
+            int currentShape = 0;
+            int currentLength = 1;
+            int currentStart = 0;
+            for (int i = 0; i < l_shapeEdges.Count; i++)
+            {
+                if (i == l_splittingPoints[currentShape])
+                {
+                    currentLength = l_splittingPoints[currentShape + 1] - l_splittingPoints[currentShape];
+                    currentStart = i;
+                    currentShape++;
+                }
+                DrawLine(WorldToView(l_shapeEdges[currentStart + i % currentLength], l_gridSize), WorldToView(l_shapeEdges[currentStart + (i + 1) % currentLength], l_gridSize), chosenPen);
+            }
+        }
     }
 }
