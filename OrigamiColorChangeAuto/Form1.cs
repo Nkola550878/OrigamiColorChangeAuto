@@ -18,11 +18,12 @@ namespace OrigamiColorChangeAuto
     {
         Canvas canvas;
         Control canvasControl;
-        int gridSize = 6;
+        int gridSize = 7;
         Vector2 startPosition;
         List<Vector2> shapeEdges = new List<Vector2>();
         List<int> splittingPoints = new List<int>();
         int squarePerimeter;
+        CP cpForm;
 
         public Model()
         {
@@ -139,8 +140,13 @@ namespace OrigamiColorChangeAuto
             }
         }
 
+        //if btnLoad_Click starts using sender or e btnCreate_Click should change
+
         private void LoadFromFile(string path)
         {
+            shapeEdges.Clear();
+            splittingPoints.Clear();
+
             StreamReader sr = new StreamReader(path);
             string points = sr.ReadLine();
             string splitters = sr.ReadLine();
@@ -170,17 +176,21 @@ namespace OrigamiColorChangeAuto
             } 
         }
 
-        private void Create_Click(object sender, EventArgs e)
+        private void btnCreate_Click(object sender, EventArgs e)
         {
+            if(shapeEdges.Count == 0 || shapeEdges == null)
+            {
+                btnLoad_Click(sender, e);
+            }
+
             int perimeter = CalculatePerimeter();
-
             perimeter += 2 * splittingPoints.Count - 4;
-
             squarePerimeter = (int)Math.Ceiling((double)perimeter / 4);
+            cpForm = new CP(squarePerimeter + 2);
 
             MessageBox.Show(squarePerimeter.ToString());
 
-            List<int> tempi = splittingPoints;
+            cpForm.Visible = true;
 
             IterateOverAllPoints(splittingPoints, squarePerimeter);
         }
@@ -269,7 +279,10 @@ namespace OrigamiColorChangeAuto
                         {
                             currentPossition2 += normalisedDifference2;
 
-                            Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_splittingPoints);
+                            if(Connect(currentIndex1, currentPossition1, currentIndex2, currentPossition2, l_splittingPoints))
+                            {
+                                return;
+                            }
                         }
 
                         currentIndex2++;
@@ -293,14 +306,15 @@ namespace OrigamiColorChangeAuto
         }
 
         //Not generalised
+        //If first connection is not solvable it doesn't check others
 
-        private void Connect(int index1, Vector2 position1, int index2, Vector2 position2, List<int> l_SplittingPoints)
+        private bool Connect(int index1, Vector2 position1, int index2, Vector2 position2, List<int> l_SplittingPoints)
         {
             List<Vector2> shapeEdgesCopy = shapeEdges.ToList();
 
             if (Vector2.Distance(position1, position2) > 1)
             {
-                return;
+                return false;
             }
             List<Vector2> changedTempEdges = shapeEdgesCopy;
 
@@ -337,7 +351,14 @@ namespace OrigamiColorChangeAuto
             CleanUp(shapeEdgesCopy);
 
             //Assuming only 2 shapes. If there was more connect wouldn't be able to call checkDistances
-            MessageBox.Show(CheckDistances(shapeEdgesCopy, squarePerimeter).ToString());
+
+            //MessageBox.Show(CheckDistances(shapeEdgesCopy, squarePerimeter).ToString());
+            if(CheckDistances(shapeEdgesCopy, squarePerimeter))
+            {
+                cpForm.CreateModel(shapeEdgesCopy);
+            }
+
+            return CheckDistances(shapeEdgesCopy, squarePerimeter);
         }
 
         private void CleanUp(List<Vector2> l_shapeEdges)

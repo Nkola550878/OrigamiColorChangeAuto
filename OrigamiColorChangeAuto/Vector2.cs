@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OrigamiColorChangeAuto
 {
-    internal class Vector2
+    public class Vector2
     {
         public float x, y;
 

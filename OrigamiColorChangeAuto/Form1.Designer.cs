@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.Create = new System.Windows.Forms.Button();
+            this.btnCreate = new System.Windows.Forms.Button();
             this.pbDrawingPlace = new System.Windows.Forms.PictureBox();
             this.tbGridSize = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
@@ -36,15 +36,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbDrawingPlace)).BeginInit();
             this.SuspendLayout();
             // 
-            // Create
+            // btnCreate
             // 
-            this.Create.Location = new System.Drawing.Point(163, 454);
-            this.Create.Name = "Create";
-            this.Create.Size = new System.Drawing.Size(75, 23);
-            this.Create.TabIndex = 0;
-            this.Create.Text = "Create";
-            this.Create.UseVisualStyleBackColor = true;
-            this.Create.Click += new System.EventHandler(this.Create_Click);
+            this.btnCreate.Location = new System.Drawing.Point(163, 454);
+            this.btnCreate.Name = "btnCreate";
+            this.btnCreate.Size = new System.Drawing.Size(75, 23);
+            this.btnCreate.TabIndex = 0;
+            this.btnCreate.Text = "Create";
+            this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // pbDrawingPlace
             // 
@@ -93,7 +93,7 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tbGridSize);
             this.Controls.Add(this.pbDrawingPlace);
-            this.Controls.Add(this.Create);
+            this.Controls.Add(this.btnCreate);
             this.Name = "Model";
             this.Text = "Model";
             this.Load += new System.EventHandler(this.Model_Load);
@@ -106,7 +106,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button Create;
+        private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.PictureBox pbDrawingPlace;
         private System.Windows.Forms.TextBox tbGridSize;
         private System.Windows.Forms.Button btnSave;

@@ -19,10 +19,10 @@ namespace OrigamiColorChangeAuto
             background
         }
 
+        public Graphics graphics;
 
         float penWidth = 2;
         Control control;
-        Graphics graphics;
 
         Pen edgePen;
         Pen mountainPen;
