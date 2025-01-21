@@ -24,6 +24,7 @@ namespace OrigamiColorChangeAuto
         List<int> splittingPoints = new List<int>();
         int squarePerimeter;
         CP cpForm;
+        List<Vector2> directionShape = new List<Vector2>();
 
         public Model()
         {
@@ -193,6 +194,63 @@ namespace OrigamiColorChangeAuto
             cpForm.Visible = true;
 
             IterateOverAllPoints(splittingPoints, squarePerimeter);
+
+            canvas.DrawShape(shapeEdges, splittingPoints, gridSize, Canvas.Pens.edge);
+
+            //FindDirections();
+        }
+
+        private void FindDirections(List<Vector2> edges)
+        {
+            List<int> l_splittingPoints = new List<int>();
+            l_splittingPoints.Add(0);
+            l_splittingPoints.Add(edges.Count);
+            FindDirections(edges, l_splittingPoints);
+        }
+
+        private void FindDirections(List<Vector2> edges, List<int> l_splittingPoints)
+        {
+            directionShape.Clear();
+            MessageBox.Show("find");
+            int indexOfCurrentShape = 0;
+
+            //assuming 1 shape
+            bool x = (edges[edges.Count - 1] - edges[0]).x != 0;
+
+            for (int i = 0; i < edges.Count; i++)
+            {
+                if (l_splittingPoints[indexOfCurrentShape + 1] == i)
+                    indexOfCurrentShape++;
+
+                int last = (i - 1 + l_splittingPoints[indexOfCurrentShape + 1] - l_splittingPoints[indexOfCurrentShape]) % (l_splittingPoints[indexOfCurrentShape + 1] - l_splittingPoints[indexOfCurrentShape]) + l_splittingPoints[indexOfCurrentShape];
+                int next = (i + 1) % (l_splittingPoints[indexOfCurrentShape + 1] - l_splittingPoints[indexOfCurrentShape]) + l_splittingPoints[indexOfCurrentShape];
+
+                directionShape.Add(edges[i] + (edges[last] - edges[i]).Normalize() * 0.1f);
+
+                if(i != 0)
+                {
+                    if (x)
+                    {
+                        directionShape[i].y = directionShape[i - 1].y;
+                    }
+                    else
+                    {
+                        directionShape[i].x = directionShape[i - 1].x;
+                    }
+                }
+                x =! x;
+
+                MessageBox.Show(directionShape[i].ToString());
+            }
+            if (x)
+            {
+                directionShape[0].y = directionShape[directionShape.Count - 1].y;
+            }
+            else
+            {
+                directionShape[0].x = directionShape[directionShape.Count - 1].x;
+            }
+            canvas.DrawShape(directionShape, l_splittingPoints, gridSize, Canvas.Pens.mountain);
         }
 
         private int CalculatePerimeter()
@@ -328,6 +386,8 @@ namespace OrigamiColorChangeAuto
             }
             indexOfTestedShape--;
 
+            //assuming first shape is the first shape
+
             if(Area(0) * Area(indexOfTestedShape) < 0)
             {
                 ChangeOrientation(shapeEdgesCopy, splittingPoints, indexOfTestedShape);
@@ -357,6 +417,9 @@ namespace OrigamiColorChangeAuto
             {
                 cpForm.CreateModel(shapeEdgesCopy);
             }
+
+            //Assuming only 2 shapes
+            FindDirections(shapeEdgesCopy);
 
             return CheckDistances(shapeEdgesCopy, squarePerimeter);
         }
@@ -414,7 +477,10 @@ namespace OrigamiColorChangeAuto
                     }
 
                     if ((distanceToEnd - distanceToStart) == 3 * l_perimeter)
+                    {
+                        Reorder(l_shapeEdges, startIndex);
                         return true;
+                    }
                 }
                 distanceToStart += Vector2.Distance(l_shapeEdges[startIndex], l_shapeEdges[(startIndex + 1) % l_shapeEdges.Count]);
                 startIndex = (startIndex + 1) % l_shapeEdges.Count;
@@ -422,6 +488,17 @@ namespace OrigamiColorChangeAuto
                 endIndex = startIndex;
             }
             return false;
+        }
+
+        private void Reorder(List<Vector2> l_shapeEdges, int startIndex)
+        {
+            Vector2 temp;
+            for (int i = 0; i < startIndex; i++)
+            {
+                temp = l_shapeEdges[0];
+                l_shapeEdges.RemoveAt(0);
+                l_shapeEdges.Add(temp);
+            }
         }
     }
 }
