@@ -147,6 +147,7 @@ namespace OrigamiColorChangeAuto
         {
             shapeEdges.Clear();
             splittingPoints.Clear();
+            int max = 0;
 
             StreamReader sr = new StreamReader(path);
             string points = sr.ReadLine();
@@ -154,6 +155,7 @@ namespace OrigamiColorChangeAuto
 
             string[] splittersSplit = splitters.Split(' ');
             splittingPoints.Clear();
+
             foreach (string s in splittersSplit)
             {
                 splittingPoints.Add(int.Parse(s));
@@ -173,8 +175,18 @@ namespace OrigamiColorChangeAuto
                     continue;
                 }
 
+                if(currentPoint.x > max)
+                {
+                    max = (int)currentPoint.x;
+                }
+                if (currentPoint.y > max)
+                {
+                    max = (int)currentPoint.y;
+                }
+
                 shapeEdges.Add(currentPoint);
-            } 
+            }
+            gridSize = max + 1;
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
@@ -315,6 +327,18 @@ namespace OrigamiColorChangeAuto
         {
             Vector2 currentPossition1 = shapeEdges[0];
             int currentIndex1 = l_splittingPoints[0];
+
+            if(l_splittingPoints.Count == 2)
+            {
+                if (CheckDistances(shapeEdges, squarePerimeter))
+                {
+                    cpForm.CreateModel(shapeEdges);
+                }
+
+                //Assuming only 2 shapes
+                FindDirections(shapeEdges);
+                return;
+            }
 
             for (int i = l_splittingPoints[0]; i < l_splittingPoints[1]; i++)
             {
